@@ -73,11 +73,11 @@ var Elasticsearch = function(options) {
   }
 
   this.bulkWriter = new BulkWriter(this.client,
-      options.flushInterval, options.consistency);
+    options.flushInterval, options.consistency);
   this.bulkWriter.start();
 
   // Conduct initial connection check (sets connection state for further use)
-  this.checkEsConnection().then(connectionOk => {});
+  this.checkEsConnection().then(function(connectionOk) {});
 
   return this;
 };
@@ -143,9 +143,9 @@ Elasticsearch.prototype.checkEsConnection = function() {
   });
 
   return new Promise(function(fulfill, reject) {
-    operation.attempt(currentAttempt => {
+    operation.attempt(function(currentAttempt) {
       thiz.client.ping().then(
-        (res) => {
+        function(res) {
           thiz.esConnection = true;
           // Ensure mapping template is existing if desired
           if (thiz.options.ensureMappingTemplate) {
@@ -154,7 +154,7 @@ Elasticsearch.prototype.checkEsConnection = function() {
             fulfill(true);
           }
         },
-        (err) => {
+        function(err) {
           if (operation.retry(err)) {
             return;
           }
@@ -185,10 +185,10 @@ Elasticsearch.prototype.ensureMappingTemplate = function(fulfill, reject) {
     name: 'template_' + thiz.options.indexPrefix
   };
   thiz.client.indices.getTemplate(tmplCheckMessage).then(
-    (res) => {
+    function(res) {
       fulfill(res);
     },
-    (res) => {
+    function(res) {
       if (res.status && res.status === 404) {
         var tmplMessage = {
           name: 'template_' + thiz.options.indexPrefix,
@@ -196,12 +196,12 @@ Elasticsearch.prototype.ensureMappingTemplate = function(fulfill, reject) {
           body: mappingTemplate
         };
         thiz.client.indices.putTemplate(tmplMessage).then(
-        (res) => {
-          fulfill(res);
-        },
-        (err) => {
-          reject(err);
-        });
+          function(res) {
+            fulfill(res);
+          },
+          function(err) {
+            reject(err);
+          });
       }
     });
 };

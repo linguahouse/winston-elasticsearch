@@ -37,7 +37,7 @@ describe('winston-elasticsearch:', function() {
       try {
         logger = new (winston.Logger)({
           transports: [
-              new (winston.transports.Elasticsearch)({
+            new (winston.transports.Elasticsearch)({
             })
           ]
         });
@@ -62,11 +62,11 @@ describe('winston-elasticsearch:', function() {
     describe('the logged message', function() {
       it('should be found in the index', function(done) {
         logger.transports.elasticsearch.search('message:logmessage1').then(
-          (res) => {
+          function(res) {
             res.hits.total.should.be.above(0);
             done();
           },
-          (err) => {
+          function(err) {
             should.not.exist(err);
           });
       });
@@ -81,11 +81,11 @@ describe('winston-elasticsearch:', function() {
       this.timeout(40000);
       var transport = new (winston.transports.Elasticsearch)({
         clientOpts: {
-         host: 'http://does-not-exist.test:9200'
+          host: 'http://does-not-exist.test:9200'
         }
       });
 
-      transport.on('error', err => {
+      transport.on('error', function(err) {
         should.exist(err);
         done();
       });
